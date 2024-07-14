@@ -26,7 +26,7 @@ import { useValue } from '../../context/ContextProvider';
 import { StarBorder } from '@mui/icons-material';
 
 const Rooms = () => {
-  const { state: { filteredRooms }, dispatch } = useValue();
+  const { state: { filteredRooms, isLoggedIn }, dispatch } = useValue();  // Assuming `isLoggedIn` is part of your context
   const [open, setOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [rentalDuration, setRentalDuration] = useState('');
@@ -48,6 +48,12 @@ const Rooms = () => {
   }, [dispatch, filteredRooms]);
 
   const handleRent = () => {
+    if (!isLoggedIn) {
+      alert('Please log in to book a room.');
+      handleClose();
+      return;
+    }
+
     const updatedRooms = filteredRooms.map(room =>
       room._id === selectedRoom._id ? { ...room, rented: true } : room
     );
@@ -66,7 +72,6 @@ const Rooms = () => {
   const printReport = (room) => {
     const reportContent = `Booking Report:\nRoom ID: ${room._id}\nTitle: ${room.title}\nPrice: $${room.price}\nDuration: ${rentalDuration} ${durationType}(s)`;
     console.log(reportContent);
-    // Replace console.log with actual report printing logic
   };
 
   const handleOpen = (room) => {
